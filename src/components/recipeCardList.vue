@@ -6,8 +6,7 @@
         :key="index"
         :src="r.src"
         :title="r.name"
-        :ingredients_amounts="r.ingredients_amounts"
-        :instructions="r.instructions"
+        :username="r.username"
       ></recipeCard>
     </b-card-group>
   </div>
@@ -16,7 +15,6 @@
 <script>
 import recipeCard from "@/components/recipeCard.vue";
 import server from "@/server.js";
-// console.log(data);
 
 export default {
   components: {

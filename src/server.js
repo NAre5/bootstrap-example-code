@@ -119,6 +119,36 @@ const db = {
 // console.log(db);
 
 const server = {
+  getAllRecipes() {
+    return db.recipes;
+  },
+
+  getRecipeData(username, recipe_name) {
+    let r = db.recipes.find(
+      r => r.name === recipe_name && r.username === username
+    );
+    if (r === undefined) throw "there is no such recipe";
+    return {
+      ...r,
+      ingredients_amounts: db.ingredients_amounts
+        .filter(
+          i_a => i_a.recipe_name === r.name && i_a.username === r.username
+        )
+        .map(i_a => {
+          return { ingredient_name: i_a.ingredient_name, amount: i_a.amount };
+        }),
+      instructions: db.instructions
+        .filter(i => i.recipe_name === r.name && i.username === r.username)
+        .map(i => {
+          return {
+            instruction_index: i.instruction_index,
+            instruction: i.instruction
+          };
+        })
+        .sort((a, b) => a.instruction_index - b.instruction_index)
+    };
+  },
+
   getAllRecipesData() {
     return db.recipes.map(r => {
       return {
@@ -143,18 +173,18 @@ const server = {
     });
   },
 
-  getRecipesThatHaveIngredient(ingredient_name) {
-    //short but good
-    return this.getAllRecipesData().filter(r =>
-      r.ingredients_amounts
-        .map(i_a => i_a.ingredient_name)
-        .includes(ingredient_name)
-    );
-  },
+  // getRecipesThatHaveIngredient(ingredient_name) {
+  //   //short but good
+  //   return this.getAllRecipesData().filter(r =>
+  //     r.ingredients_amounts
+  //       .map(i_a => i_a.ingredient_name)
+  //       .includes(ingredient_name)
+  //   );
+  // },
 
   getRecipesThatMadeByUser(username) {
     //short but good
-    return this.getAllRecipesData().filter(r => r.username === username);
+    return this.getAllRecipes().filter(r => r.username === username);
   },
 
   getAllIngredients() {
